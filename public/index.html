@@ -124,8 +124,9 @@
         </div>
 
         <!-- Schedule Modal -->
-        <div id="scheduleModal" class="modal hidden">
-            <div class="modal-content card">
+        <div id="scheduleModal" class="modal hidden" style="display: none;"
+            onclick="this.classList.add('hidden'); this.style.display='none';">
+            <div class="modal-content card" onclick="event.stopPropagation();">
                 <h2 style="margin-bottom: var(--spacing-md);">📅 Schedule Uploads</h2>
 
                 <div class="form-group">
