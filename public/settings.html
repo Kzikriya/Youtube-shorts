@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - YouTube Shorts Automation</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <h1 class="logo">⚙️ Settings</h1>
+            <p class="tagline">Configure your API keys and authentication</p>
+            <a href="/"
+                style="color: var(--primary); text-decoration: none; margin-top: var(--spacing-sm); display: inline-block;">←
+                Back to Home</a>
+        </header>
+
+        <!-- API Configuration -->
+        <div class="card mb-2">
+            <h2 style="margin-bottom: var(--spacing-md);">🔑 API Configuration</h2>
+
+            <form id="apiConfigForm">
+                <!-- Gemini API Key -->
+                <div class="form-group">
+                    <label for="geminiApiKey">
+                        Google Gemini API Key
+                        <a href="https://makersuite.google.com/app/apikey" target="_blank"
+                            style="color: var(--accent); font-size: 0.875rem; margin-left: 0.5rem;">Get API Key →</a>
+                    </label>
+                    <input type="password" id="geminiApiKey" placeholder="Enter your Gemini API key">
+                    <small class="text-muted">Used for generating AI-powered titles and descriptions</small>
+                </div>
+
+                <!-- Redis Configuration -->
+                <div class="grid grid-2">
+                    <div class="form-group">
+                        <label for="redisHost">Redis Host</label>
+                        <input type="text" id="redisHost" placeholder="localhost" value="localhost">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="redisPort">Redis Port</label>
+                        <input type="number" id="redisPort" placeholder="6379" value="6379">
+                    </div>
+                </div>
+
+                <!-- Processing Settings -->
+                <h3 style="margin-top: var(--spacing-lg); margin-bottom: var(--spacing-md);">Processing Settings</h3>
+
+                <div class="grid grid-2">
+                    <div class="form-group">
+                        <label for="maxConcurrentJobs">Max Concurrent Jobs</label>
+                        <input type="number" id="maxConcurrentJobs" min="1" max="5" value="2">
+                        <small class="text-muted">Number of videos to process simultaneously</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="defaultClipDuration">Default Clip Duration (seconds)</label>
+                        <input type="number" id="defaultClipDuration" min="1" max="60" value="15">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    💾 Save Configuration
+                </button>
+            </form>
+        </div>
+
+        <!-- YouTube Authentication -->
+        <div class="card mb-2">
+            <h2 style="margin-bottom: var(--spacing-md);">📺 YouTube Authentication</h2>
+
+            <div id="youtubeAuthStatus" class="mb-2">
+                <div class="flex-between">
+                    <div>
+                        <h3>Connection Status</h3>
+                        <p class="text-muted" id="ytAuthStatusText">Checking...</p>
+                    </div>
+                    <span id="ytAuthBadge" class="badge badge-warning">Not Connected</span>
+                </div>
+            </div>
+
+            <!-- Upload Credentials -->
+            <div class="form-group">
+                <label for="credentialsFile">
+                    YouTube OAuth Credentials (JSON)
+                    <a href="https://console.cloud.google.com/" target="_blank"
+                        style="color: var(--accent); font-size: 0.875rem; margin-left: 0.5rem;">Get Credentials →</a>
+                </label>
+                <input type="file" id="credentialsFile" accept=".json"
+                    style="padding: 0.5rem; background: var(--bg-secondary); border: 2px dashed var(--bg-tertiary); border-radius: var(--radius-md); width: 100%; cursor: pointer;">
+                <small class="text-muted">Upload your OAuth 2.0 credentials JSON file from Google Cloud Console</small>
+            </div>
+
+            <button id="uploadCredentialsBtn" class="btn btn-secondary mb-1" style="width: 100%;">
+                📤 Upload Credentials
+            </button>
+
+            <button id="connectYoutubeBtn" class="btn btn-accent" style="width: 100%;" disabled>
+                🔗 Connect to YouTube
+            </button>
+
+            <!-- Channel Info -->
+            <div id="channelInfo" class="hidden"
+                style="margin-top: var(--spacing-md); padding: var(--spacing-md); background: var(--bg-secondary); border-radius: var(--radius-md);">
+                <h3>Connected Channel</h3>
+                <div id="channelDetails"></div>
+            </div>
+        </div>
+
+        <!-- System Status -->
+        <div class="card mb-2">
+            <h2 style="margin-bottom: var(--spacing-md);">🖥️ System Status</h2>
+
+            <div class="grid grid-2">
+                <div class="status-item">
+                    <h3>yt-dlp</h3>
+                    <p id="ytdlpStatus" class="text-muted">Checking...</p>
+                </div>
+
+                <div class="status-item">
+                    <h3>FFmpeg</h3>
+                    <p id="ffmpegStatus" class="text-muted">Checking...</p>
+                </div>
+
+                <div class="status-item">
+                    <h3>Redis</h3>
+                    <p id="redisStatus" class="text-muted">Checking...</p>
+                </div>
+
+                <div class="status-item">
+                    <h3>Server</h3>
+                    <p id="serverStatus" class="text-muted">Checking...</p>
+                </div>
+            </div>
+
+            <button id="checkSystemBtn" class="btn btn-primary mt-2" style="width: 100%;">
+                🔄 Check System Status
+            </button>
+        </div>
+
+        <!-- Instructions -->
+        <div class="card">
+            <h2 style="margin-bottom: var(--spacing-md);">📖 Setup Instructions</h2>
+
+            <div style="line-height: 1.8;">
+                <h3>1. Install System Dependencies</h3>
+                <ul style="margin-left: var(--spacing-lg); margin-bottom: var(--spacing-md);">
+                    <li><strong>yt-dlp</strong>: Download from <a href="https://github.com/yt-dlp/yt-dlp"
+                            target="_blank" style="color: var(--accent);">GitHub</a></li>
+                    <li><strong>FFmpeg</strong>: Download from <a href="https://ffmpeg.org/download.html"
+                            target="_blank" style="color: var(--accent);">ffmpeg.org</a></li>
+                    <li><strong>Redis</strong>: Install and start Redis server</li>
+                </ul>
+
+                <h3>2. Get API Keys</h3>
+                <ul style="margin-left: var(--spacing-lg); margin-bottom: var(--spacing-md);">
+                    <li><strong>Gemini API</strong>: Visit <a href="https://makersuite.google.com/app/apikey"
+                            target="_blank" style="color: var(--accent);">Google AI Studio</a></li>
+                    <li><strong>YouTube OAuth</strong>: Create credentials in <a
+                            href="https://console.cloud.google.com/" target="_blank"
+                            style="color: var(--accent);">Google Cloud Console</a></li>
+                </ul>
+
+                <h3>3. Configure YouTube API</h3>
+                <ol style="margin-left: var(--spacing-lg); margin-bottom: var(--spacing-md);">
+                    <li>Create a project in Google Cloud Console</li>
+                    <li>Enable YouTube Data API v3</li>
+                    <li>Create OAuth 2.0 credentials (Web application)</li>
+                    <li>Add <code>http://localhost:3000</code> to authorized redirect URIs</li>
+                    <li>Download credentials JSON and upload above</li>
+                </ol>
+
+                <h3>4. Start Using</h3>
+                <p>Once all configurations are set, return to the <a href="/" style="color: var(--accent);">home
+                        page</a> to start processing videos!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Container -->
+    <div id="notificationContainer"></div>
+
+    <script src="/js/settings.js"></script>
+
+    <style>
+        .status-item {
+            padding: var(--spacing-md);
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+        }
+
+        .status-item h3 {
+            font-size: 1rem;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        code {
+            background: var(--bg-tertiary);
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--radius-sm);
+            font-family: 'Courier New', monospace;
+            color: var(--accent);
+        }
+
+        ul,
+        ol {
+            color: var(--text-secondary);
+        }
+
+        li {
+            margin-bottom: var(--spacing-xs);
+        }
+
+        a {
+            transition: color var(--transition-fast);
+        }
+
+        a:hover {
+            color: var(--primary-light);
+        }
+    </style>
+</body>
+
+</html>

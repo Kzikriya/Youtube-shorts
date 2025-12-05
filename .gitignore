@@ -1,0 +1,15 @@
+node_modules/
+.env
+*.log
+temp/
+output/
+credentials/
+*.mp4
+*.webm
+*.mkv
+*.avi
+.DS_Store
+Thumbs.db
+
+# Railway
+.railway/
