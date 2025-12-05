@@ -16,11 +16,22 @@ class YouTubeUploader {
      */
     async initialize() {
         try {
-            if (!fs.existsSync(this.credentialsPath)) {
-                throw new Error('YouTube credentials file not found. Please set up OAuth credentials.');
+            let credentials;
+
+            // Check if credentials are in environment variable (for Railway/production)
+            if (process.env.YOUTUBE_CREDENTIALS_JSON) {
+                console.log('📋 Loading YouTube credentials from environment variable');
+                credentials = JSON.parse(process.env.YOUTUBE_CREDENTIALS_JSON);
+            }
+            // Otherwise, load from file (for local development)
+            else if (fs.existsSync(this.credentialsPath)) {
+                console.log('📋 Loading YouTube credentials from file');
+                credentials = JSON.parse(fs.readFileSync(this.credentialsPath, 'utf8'));
+            }
+            else {
+                throw new Error('YouTube credentials not found. Please set YOUTUBE_CREDENTIALS_JSON environment variable or provide credentials file.');
             }
 
-            const credentials = JSON.parse(fs.readFileSync(this.credentialsPath, 'utf8'));
             const { client_id, client_secret, redirect_uris } = credentials.installed || credentials.web;
 
             this.oauth2Client = new google.auth.OAuth2(
