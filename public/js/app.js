@@ -326,6 +326,7 @@ confirmScheduleBtn.addEventListener('click', async () => {
 // Cancel schedule
 cancelScheduleBtn.addEventListener('click', () => {
     scheduleModal.classList.add('hidden');
+    scheduleModal.style.display = 'none';
 });
 
 // Reset form
